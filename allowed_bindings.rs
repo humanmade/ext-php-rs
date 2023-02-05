@@ -142,7 +142,6 @@ bind! {
     IS_PTR,
     MAY_BE_ANY,
     MAY_BE_BOOL,
-    PHP_INI_PERDIR,
     USING_ZTS,
     ZEND_ACC_ABSTRACT,
     ZEND_ACC_ANON_CLASS,
