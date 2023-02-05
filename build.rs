@@ -236,7 +236,7 @@ fn main() -> Result<()> {
     ] {
         println!("cargo:rerun-if-changed={}", path.to_string_lossy());
     }
-    for env_var in ["PHP", "PHP_CONFIG", "PATH"] {
+    for env_var in ["PHP", "PHP_CONFIG"] {
         println!("cargo:rerun-if-env-changed={}", env_var);
     }
 
