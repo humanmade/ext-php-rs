@@ -21,7 +21,7 @@ use crate::{
         zend_hash_next_index_insert, zend_hash_str_del, zend_hash_str_find, zend_hash_str_update,
         HT_MIN_SIZE,
     },
-    flags::DataType,
+    flags::{DataType, ZvalTypeFlags},
     types::Zval,
 };
 
@@ -555,8 +555,12 @@ impl<'a> Iterator for Iter<'a> {
         if pos == self.end? {
             return None;
         }
-
         let bucket = unsafe { pos.as_ref() };
+        if bucket.val.get_type() == DataType::Undef {
+            self.pos = NonNull::new(unsafe { pos.as_ptr().offset(1) });
+            return self.next();
+        };
+
         let key = unsafe { bucket.key.as_ref() }.and_then(|s| s.try_into().ok());
 
         self.pos = NonNull::new(unsafe { pos.as_ptr().offset(1) });
