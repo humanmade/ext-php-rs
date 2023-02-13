@@ -31,7 +31,7 @@ pub trait PHPProvider<'a>: Sized {
     /// Writes the bindings to a file.
     fn write_bindings(&self, bindings: String, writer: &mut impl Write) -> Result<()> {
         for line in bindings.lines() {
-            writeln!(writer, "{}", line)?;
+            writeln!(writer, "{line}")?;
         }
         Ok(())
     }
@@ -126,7 +126,7 @@ impl PHPInfo {
     }
 
     fn get_key(&self, key: &str) -> Option<&str> {
-        let split = format!("{} => ", key);
+        let split = format!("{key} => ");
         for line in self.0.lines() {
             let components: Vec<_> = line.split(&split).collect();
             if components.len() > 1 {
@@ -160,11 +160,7 @@ fn generate_bindings(defines: &[(&str, &str)], includes: &[PathBuf]) -> Result<S
                 .iter()
                 .map(|inc| format!("-I{}", inc.to_string_lossy())),
         )
-        .clang_args(
-            defines
-                .iter()
-                .map(|(var, val)| format!("-D{}={}", var, val)),
-        )
+        .clang_args(defines.iter().map(|(var, val)| format!("-D{var}={val}")))
         .rustfmt_bindings(true)
         .no_copy("_zval_struct")
         .no_copy("_zend_string")
