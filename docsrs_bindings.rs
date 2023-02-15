@@ -1417,6 +1417,9 @@ extern "C" {
     ) -> zend_result;
 }
 extern "C" {
+    pub fn display_ini_entries(module: *mut zend_module_entry);
+}
+extern "C" {
     pub fn zend_register_bool_constant(
         name: *const ::std::os::raw::c_char,
         name_len: usize,
@@ -1463,6 +1466,15 @@ extern "C" {
 }
 extern "C" {
     pub fn php_info_print_table_end();
+}
+extern "C" {
+    pub fn php_unserialize_with_options(
+        return_value: *mut zval,
+        buf: *const ::std::os::raw::c_char,
+        buf_len: usize,
+        options: *mut HashTable,
+        function_name: *const ::std::os::raw::c_char,
+    );
 }
 extern "C" {
     pub static mut zend_ce_throwable: *mut zend_class_entry;
@@ -1528,4 +1540,21 @@ extern "C" {
 }
 extern "C" {
     pub static mut zend_ce_stringable: *mut zend_class_entry;
+}
+extern "C" {
+    pub fn zend_class_serialize_deny(
+        object: *mut zval,
+        buffer: *mut *mut ::std::os::raw::c_uchar,
+        buf_len: *mut usize,
+        data: *mut zend_serialize_data,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn zend_class_unserialize_deny(
+        object: *mut zval,
+        ce: *mut zend_class_entry,
+        buf: *const ::std::os::raw::c_uchar,
+        buf_len: usize,
+        data: *mut zend_unserialize_data,
+    ) -> ::std::os::raw::c_int;
 }

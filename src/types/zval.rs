@@ -32,8 +32,8 @@ pub type Zval = zval;
 // reference the same object and attempt to modify refcounter at the same time.
 // need to look into how ZTS works.
 
-// unsafe impl Send for Zval {}
-// unsafe impl Sync for Zval {}
+unsafe impl Send for Zval {}
+unsafe impl Sync for Zval {}
 
 impl Zval {
     /// Creates a new, empty zval.
@@ -627,7 +627,7 @@ impl Debug for Zval {
 
 impl Drop for Zval {
     fn drop(&mut self) {
-        self.change_type(ZvalTypeFlags::Null);
+        //self.change_type(ZvalTypeFlags::Null);
     }
 }
 
