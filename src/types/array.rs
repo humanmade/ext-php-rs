@@ -21,7 +21,7 @@ use crate::{
         zend_hash_next_index_insert, zend_hash_str_del, zend_hash_str_find, zend_hash_str_update,
         HT_MIN_SIZE,
     },
-    flags::{DataType, ZvalTypeFlags},
+    flags::DataType,
     types::Zval,
 };
 
