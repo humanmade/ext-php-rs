@@ -17,7 +17,7 @@
 //
 //   The hash after `ext-php-rs-` in the bindings path may change. There should
 //   be two folders beginning with `ext-php-rs-` in `target/debug/build`, so
-//   check both for the presense of the bindings file.
+//   check both for the presence of the bindings file.
 
 bind! {
     HashTable,
@@ -240,6 +240,12 @@ bind! {
     zend_class_unserialize_deny,
     zend_executor_globals,
     zend_objects_store_del,
+    zend_hash_move_forward_ex,
+    zend_hash_get_current_key_type_ex,
+    zend_hash_get_current_key_zval_ex,
+    zend_hash_get_current_data_ex,
+    zend_hash_move_backwards_ex,
+    zend_array_count,
     gc_possible_root,
     ZEND_ACC_NOT_SERIALIZABLE,
     executor_globals,
