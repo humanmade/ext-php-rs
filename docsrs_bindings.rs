@@ -87,11 +87,6 @@ pub const CONST_CS: u32 = 0;
 pub const CONST_PERSISTENT: u32 = 1;
 pub const CONST_NO_FILE_CACHE: u32 = 2;
 pub const CONST_DEPRECATED: u32 = 4;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct __sigset_t {
-    pub __val: [::std::os::raw::c_ulong; 16usize],
-}
 pub type zend_long = i64;
 pub type zend_ulong = u64;
 pub type zend_uchar = ::std::os::raw::c_uchar;
@@ -290,22 +285,10 @@ pub struct _zend_ast_ref {
     pub gc: zend_refcounted_h,
 }
 extern "C" {
-    pub fn _emalloc(
-        size: usize,
-        __zend_filename: *const ::std::os::raw::c_char,
-        __zend_lineno: u32,
-        __zend_orig_filename: *const ::std::os::raw::c_char,
-        __zend_orig_lineno: u32,
-    ) -> *mut ::std::os::raw::c_void;
+    pub fn _emalloc(size: usize) -> *mut ::std::os::raw::c_void;
 }
 extern "C" {
-    pub fn _efree(
-        ptr: *mut ::std::os::raw::c_void,
-        __zend_filename: *const ::std::os::raw::c_char,
-        __zend_lineno: u32,
-        __zend_orig_filename: *const ::std::os::raw::c_char,
-        __zend_orig_lineno: u32,
-    );
+    pub fn _efree(ptr: *mut ::std::os::raw::c_void);
 }
 extern "C" {
     pub fn __zend_malloc(len: usize) -> *mut ::std::os::raw::c_void;
@@ -359,7 +342,32 @@ extern "C" {
     pub fn zend_hash_index_find(ht: *const HashTable, h: zend_ulong) -> *mut zval;
 }
 extern "C" {
+    pub fn zend_hash_move_forward_ex(ht: *mut HashTable, pos: *mut HashPosition) -> zend_result;
+}
+extern "C" {
+    pub fn zend_hash_move_backwards_ex(ht: *mut HashTable, pos: *mut HashPosition) -> zend_result;
+}
+extern "C" {
+    pub fn zend_hash_get_current_key_zval_ex(
+        ht: *const HashTable,
+        key: *mut zval,
+        pos: *const HashPosition,
+    );
+}
+extern "C" {
+    pub fn zend_hash_get_current_key_type_ex(
+        ht: *mut HashTable,
+        pos: *mut HashPosition,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn zend_hash_get_current_data_ex(ht: *mut HashTable, pos: *mut HashPosition) -> *mut zval;
+}
+extern "C" {
     pub fn _zend_new_array(size: u32) -> *mut HashTable;
+}
+extern "C" {
+    pub fn zend_array_count(ht: *mut HashTable) -> u32;
 }
 extern "C" {
     pub fn zend_array_dup(source: *mut HashTable) -> *mut HashTable;
@@ -1007,15 +1015,7 @@ pub struct _zend_execute_data {
     pub run_time_cache: *mut *mut ::std::os::raw::c_void,
     pub extra_named_params: *mut zend_array,
 }
-pub type __jmp_buf = [::std::os::raw::c_long; 8usize];
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct __jmp_buf_tag {
-    pub __jmpbuf: __jmp_buf,
-    pub __mask_was_saved: ::std::os::raw::c_int,
-    pub __saved_mask: __sigset_t,
-}
-pub type jmp_buf = [__jmp_buf_tag; 1usize];
+pub type sigjmp_buf = [::std::os::raw::c_int; 49usize];
 pub type zend_executor_globals = _zend_executor_globals;
 extern "C" {
     pub static mut executor_globals: zend_executor_globals;
@@ -1082,7 +1082,7 @@ pub struct _zend_executor_globals {
     pub symtable_cache_ptr: *mut *mut zend_array,
     pub symbol_table: zend_array,
     pub included_files: HashTable,
-    pub bailout: *mut jmp_buf,
+    pub bailout: *mut sigjmp_buf,
     pub error_reporting: ::std::os::raw::c_int,
     pub exit_status: ::std::os::raw::c_int,
     pub function_table: *mut HashTable,
