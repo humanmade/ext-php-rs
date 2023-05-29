@@ -107,6 +107,30 @@ pub const CONST_CS: u32 = 0;
 pub const CONST_PERSISTENT: u32 = 1;
 pub const CONST_NO_FILE_CACHE: u32 = 2;
 pub const CONST_DEPRECATED: u32 = 4;
+pub type __dev_t = ::std::os::raw::c_ulong;
+pub type __uid_t = ::std::os::raw::c_uint;
+pub type __gid_t = ::std::os::raw::c_uint;
+pub type __ino_t = ::std::os::raw::c_ulong;
+pub type __mode_t = ::std::os::raw::c_uint;
+pub type __nlink_t = ::std::os::raw::c_uint;
+pub type __off_t = ::std::os::raw::c_long;
+pub type __time_t = ::std::os::raw::c_long;
+pub type __blksize_t = ::std::os::raw::c_int;
+pub type __blkcnt_t = ::std::os::raw::c_long;
+pub type __syscall_slong_t = ::std::os::raw::c_long;
+pub type gid_t = __gid_t;
+pub type uid_t = __uid_t;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __sigset_t {
+    pub __val: [::std::os::raw::c_ulong; 16usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct timespec {
+    pub tv_sec: __time_t,
+    pub tv_nsec: __syscall_slong_t,
+}
 pub type zend_long = i64;
 pub type zend_ulong = u64;
 pub type zend_uchar = ::std::os::raw::c_uchar;
@@ -313,6 +337,28 @@ extern "C" {
 extern "C" {
     pub fn __zend_malloc(len: usize) -> *mut ::std::os::raw::c_void;
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_llist_element {
+    pub next: *mut _zend_llist_element,
+    pub prev: *mut _zend_llist_element,
+    pub data: [::std::os::raw::c_char; 1usize],
+}
+pub type zend_llist_element = _zend_llist_element;
+pub type llist_dtor_func_t =
+    ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_llist {
+    pub head: *mut zend_llist_element,
+    pub tail: *mut zend_llist_element,
+    pub count: usize,
+    pub size: usize,
+    pub dtor: llist_dtor_func_t,
+    pub persistent: ::std::os::raw::c_uchar,
+    pub traverse_ptr: *mut zend_llist_element,
+}
+pub type zend_llist = _zend_llist;
 pub type zend_string_init_interned_func_t = ::std::option::Option<
     unsafe extern "C" fn(
         str_: *const ::std::os::raw::c_char,
@@ -461,6 +507,27 @@ pub struct _zend_class_arrayaccess_funcs {
     pub zf_offsetunset: *mut zend_function,
 }
 pub type zend_class_arrayaccess_funcs = _zend_class_arrayaccess_funcs;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct stat {
+    pub st_dev: __dev_t,
+    pub st_ino: __ino_t,
+    pub st_mode: __mode_t,
+    pub st_nlink: __nlink_t,
+    pub st_uid: __uid_t,
+    pub st_gid: __gid_t,
+    pub st_rdev: __dev_t,
+    pub __pad1: __dev_t,
+    pub st_size: __off_t,
+    pub st_blksize: __blksize_t,
+    pub __pad2: ::std::os::raw::c_int,
+    pub st_blocks: __blkcnt_t,
+    pub st_atim: timespec,
+    pub st_mtim: timespec,
+    pub st_ctim: timespec,
+    pub __glibc_reserved: [::std::os::raw::c_int; 2usize],
+}
+pub type zend_stat_t = stat;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _zend_serialize_data {
@@ -1557,4 +1624,127 @@ extern "C" {
         buf_len: usize,
         data: *mut zend_unserialize_data,
     ) -> ::std::os::raw::c_int;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct sapi_header_struct {
+    pub header: *mut ::std::os::raw::c_char,
+    pub header_len: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct sapi_headers_struct {
+    pub headers: zend_llist,
+    pub http_response_code: ::std::os::raw::c_int,
+    pub send_default_content_type: ::std::os::raw::c_uchar,
+    pub mimetype: *mut ::std::os::raw::c_char,
+    pub http_status_line: *mut ::std::os::raw::c_char,
+}
+pub type sapi_module_struct = _sapi_module_struct;
+extern "C" {
+    pub static mut sapi_module: sapi_module_struct;
+}
+pub const sapi_header_op_enum_SAPI_HEADER_REPLACE: sapi_header_op_enum = 0;
+pub const sapi_header_op_enum_SAPI_HEADER_ADD: sapi_header_op_enum = 1;
+pub const sapi_header_op_enum_SAPI_HEADER_DELETE: sapi_header_op_enum = 2;
+pub const sapi_header_op_enum_SAPI_HEADER_DELETE_ALL: sapi_header_op_enum = 3;
+pub const sapi_header_op_enum_SAPI_HEADER_SET_STATUS: sapi_header_op_enum = 4;
+pub type sapi_header_op_enum = ::std::os::raw::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _sapi_module_struct {
+    pub name: *mut ::std::os::raw::c_char,
+    pub pretty_name: *mut ::std::os::raw::c_char,
+    pub startup: ::std::option::Option<
+        unsafe extern "C" fn(sapi_module: *mut _sapi_module_struct) -> ::std::os::raw::c_int,
+    >,
+    pub shutdown: ::std::option::Option<
+        unsafe extern "C" fn(sapi_module: *mut _sapi_module_struct) -> ::std::os::raw::c_int,
+    >,
+    pub activate: ::std::option::Option<unsafe extern "C" fn() -> ::std::os::raw::c_int>,
+    pub deactivate: ::std::option::Option<unsafe extern "C" fn() -> ::std::os::raw::c_int>,
+    pub ub_write: ::std::option::Option<
+        unsafe extern "C" fn(str_: *const ::std::os::raw::c_char, str_length: usize) -> usize,
+    >,
+    pub flush:
+        ::std::option::Option<unsafe extern "C" fn(server_context: *mut ::std::os::raw::c_void)>,
+    pub get_stat: ::std::option::Option<unsafe extern "C" fn() -> *mut zend_stat_t>,
+    pub getenv: ::std::option::Option<
+        unsafe extern "C" fn(
+            name: *const ::std::os::raw::c_char,
+            name_len: usize,
+        ) -> *mut ::std::os::raw::c_char,
+    >,
+    pub sapi_error: ::std::option::Option<
+        unsafe extern "C" fn(
+            type_: ::std::os::raw::c_int,
+            error_msg: *const ::std::os::raw::c_char,
+            ...
+        ),
+    >,
+    pub header_handler: ::std::option::Option<
+        unsafe extern "C" fn(
+            sapi_header: *mut sapi_header_struct,
+            op: sapi_header_op_enum,
+            sapi_headers: *mut sapi_headers_struct,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub send_headers: ::std::option::Option<
+        unsafe extern "C" fn(sapi_headers: *mut sapi_headers_struct) -> ::std::os::raw::c_int,
+    >,
+    pub send_header: ::std::option::Option<
+        unsafe extern "C" fn(
+            sapi_header: *mut sapi_header_struct,
+            server_context: *mut ::std::os::raw::c_void,
+        ),
+    >,
+    pub read_post: ::std::option::Option<
+        unsafe extern "C" fn(buffer: *mut ::std::os::raw::c_char, count_bytes: usize) -> usize,
+    >,
+    pub read_cookies: ::std::option::Option<unsafe extern "C" fn() -> *mut ::std::os::raw::c_char>,
+    pub register_server_variables:
+        ::std::option::Option<unsafe extern "C" fn(track_vars_array: *mut zval)>,
+    pub log_message: ::std::option::Option<
+        unsafe extern "C" fn(
+            message: *const ::std::os::raw::c_char,
+            syslog_type_int: ::std::os::raw::c_int,
+        ),
+    >,
+    pub get_request_time: ::std::option::Option<unsafe extern "C" fn() -> f64>,
+    pub terminate_process: ::std::option::Option<unsafe extern "C" fn()>,
+    pub php_ini_path_override: *mut ::std::os::raw::c_char,
+    pub default_post_reader: ::std::option::Option<unsafe extern "C" fn()>,
+    pub treat_data: ::std::option::Option<
+        unsafe extern "C" fn(
+            arg: ::std::os::raw::c_int,
+            str_: *mut ::std::os::raw::c_char,
+            destArray: *mut zval,
+        ),
+    >,
+    pub executable_location: *mut ::std::os::raw::c_char,
+    pub php_ini_ignore: ::std::os::raw::c_int,
+    pub php_ini_ignore_cwd: ::std::os::raw::c_int,
+    pub get_fd: ::std::option::Option<
+        unsafe extern "C" fn(fd: *mut ::std::os::raw::c_int) -> ::std::os::raw::c_int,
+    >,
+    pub force_http_10: ::std::option::Option<unsafe extern "C" fn() -> ::std::os::raw::c_int>,
+    pub get_target_uid:
+        ::std::option::Option<unsafe extern "C" fn(arg1: *mut uid_t) -> ::std::os::raw::c_int>,
+    pub get_target_gid:
+        ::std::option::Option<unsafe extern "C" fn(arg1: *mut gid_t) -> ::std::os::raw::c_int>,
+    pub input_filter: ::std::option::Option<
+        unsafe extern "C" fn(
+            arg: ::std::os::raw::c_int,
+            var: *const ::std::os::raw::c_char,
+            val: *mut *mut ::std::os::raw::c_char,
+            val_len: usize,
+            new_val_len: *mut usize,
+        ) -> ::std::os::raw::c_uint,
+    >,
+    pub ini_defaults:
+        ::std::option::Option<unsafe extern "C" fn(configuration_hash: *mut HashTable)>,
+    pub phpinfo_as_text: ::std::os::raw::c_int,
+    pub ini_entries: *mut ::std::os::raw::c_char,
+    pub additional_functions: *const zend_function_entry,
+    pub input_filter_init: ::std::option::Option<unsafe extern "C" fn() -> ::std::os::raw::c_uint>,
 }
