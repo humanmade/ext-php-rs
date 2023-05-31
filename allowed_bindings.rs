@@ -252,5 +252,6 @@ bind! {
     php_printf,
     __zend_malloc,
     tsrm_get_ls_cache,
-    executor_globals_offset
+    executor_globals_offset,
+    sapi_module
 }
