@@ -31,6 +31,7 @@ use crate::error::{Error, Result};
 
 bitflags! {
     /// Flags used for setting the type of Zval.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct ZvalTypeFlags: u32 {
         const Undef = IS_UNDEF;
         const Null = IS_NULL;
@@ -48,13 +49,13 @@ bitflags! {
         const Void = IS_VOID;
         const Ptr = IS_PTR;
 
-        const InternedStringEx = Self::String.bits;
-        const StringEx = Self::String.bits | Self::RefCounted.bits;
-        const ArrayEx = Self::Array.bits | Self::RefCounted.bits | Self::Collectable.bits;
-        const ObjectEx = Self::Object.bits | Self::RefCounted.bits | Self::Collectable.bits;
-        const ResourceEx = Self::Resource.bits | Self::RefCounted.bits;
-        const ReferenceEx = Self::Reference.bits | Self::RefCounted.bits;
-        const ConstantAstEx = Self::ConstantExpression.bits | Self::RefCounted.bits;
+        const InternedStringEx = Self::String.bits();
+        const StringEx = Self::String.bits() | Self::RefCounted.bits();
+        const ArrayEx = Self::Array.bits() | Self::RefCounted.bits() | Self::Collectable.bits();
+        const ObjectEx = Self::Object.bits() | Self::RefCounted.bits() | Self::Collectable.bits();
+        const ResourceEx = Self::Resource.bits() | Self::RefCounted.bits();
+        const ReferenceEx = Self::Reference.bits() | Self::RefCounted.bits();
+        const ConstantAstEx = Self::ConstantExpression.bits() | Self::RefCounted.bits();
 
         const RefCounted = (IS_TYPE_REFCOUNTED << Z_TYPE_FLAGS_SHIFT);
         const Collectable = (IS_TYPE_COLLECTABLE << Z_TYPE_FLAGS_SHIFT);
@@ -63,6 +64,7 @@ bitflags! {
 
 bitflags! {
     /// Flags for building classes.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct ClassFlags: u32 {
         const Final = ZEND_ACC_FINAL;
         const Abstract = ZEND_ACC_ABSTRACT;
@@ -94,6 +96,7 @@ bitflags! {
 
 bitflags! {
     /// Flags for building methods.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct MethodFlags: u32 {
         const Public = ZEND_ACC_PUBLIC;
         const Protected = ZEND_ACC_PROTECTED;
@@ -129,6 +132,7 @@ bitflags! {
 
 bitflags! {
     /// Flags for building properties.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct PropertyFlags: u32 {
         const Public = ZEND_ACC_PUBLIC;
         const Protected = ZEND_ACC_PROTECTED;
@@ -141,6 +145,7 @@ bitflags! {
 
 bitflags! {
     /// Flags for building constants.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct ConstantFlags: u32 {
         const Public = ZEND_ACC_PUBLIC;
         const Protected = ZEND_ACC_PROTECTED;
@@ -151,6 +156,7 @@ bitflags! {
 
 bitflags! {
     /// Flags for building module global constants.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct GlobalConstantFlags: u32 {
         const CaseSensitive = CONST_CS;
         const Persistent = CONST_PERSISTENT;
@@ -161,6 +167,7 @@ bitflags! {
 
 bitflags! {
     /// Represents the result of a function.
+    #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     pub struct ZendResult: i32 {
         const Success = 0;
         const Failure = -1;
