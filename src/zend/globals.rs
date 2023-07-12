@@ -7,9 +7,9 @@ use parking_lot::{const_rwlock, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 use crate::boxed::ZBox;
 use crate::ffi::{
-    _zend_executor_globals, core_globals, ext_php_rs_executor_globals, php_core_globals,
-    zend_ini_entry, TRACK_VARS_COOKIE, TRACK_VARS_ENV, TRACK_VARS_FILES, TRACK_VARS_GET,
-    TRACK_VARS_POST, TRACK_VARS_REQUEST, TRACK_VARS_SERVER,
+    _zend_executor_globals, ext_php_rs_executor_globals, ext_php_rs_process_globals, ext_php_rs_sapi_globals,
+    php_core_globals, sapi_globals_struct, TRACK_VARS_COOKIE, TRACK_VARS_ENV, TRACK_VARS_FILES, TRACK_VARS_GET,
+    TRACK_VARS_POST, TRACK_VARS_REQUEST, TRACK_VARS_SERVER, zend_ini_entry
 };
 
 use crate::types::{ZendHashTable, ZendObject};
@@ -115,7 +115,7 @@ impl ProcessGlobals {
     pub fn get() -> GlobalReadGuard<Self> {
         // SAFETY: PHP executor globals are statically declared therefore should never
         // return an invalid pointer.
-        let globals = unsafe { &core_globals };
+        let globals = unsafe { &*ext_php_rs_process_globals() };
         let guard = PROCESS_GLOBALS_LOCK.read();
         GlobalReadGuard { globals, guard }
     }
@@ -130,7 +130,7 @@ impl ProcessGlobals {
     pub fn get_mut() -> GlobalWriteGuard<Self> {
         // SAFETY: PHP executor globals are statically declared therefore should never
         // return an invalid pointer.
-        let globals = unsafe { &mut core_globals };
+        let globals = unsafe { &mut *ext_php_rs_process_globals() };
         let guard = PROCESS_GLOBALS_LOCK.write();
         GlobalWriteGuard { globals, guard }
     }
@@ -187,12 +187,49 @@ impl ProcessGlobals {
     }
 }
 
+
+/// Stores global variables used in the SAPI.
+pub type SapiGlobals = sapi_globals_struct;
+
+impl SapiGlobals {
+    /// Returns a reference to the PHP process globals.
+    ///
+    /// The process globals are guarded by a RwLock. There can be multiple
+    /// immutable references at one time but only ever one mutable reference.
+    /// Attempting to retrieve the globals while already holding the global
+    /// guard will lead to a deadlock. Dropping the globals guard will release
+    /// the lock.
+    pub fn get() -> GlobalReadGuard<Self> {
+        // SAFETY: PHP executor globals are statically declared therefore should never
+        // return an invalid pointer.
+        let globals = unsafe { &*ext_php_rs_sapi_globals() };
+        let guard = SAPI_GLOBALS_LOCK.read();
+        GlobalReadGuard { globals, guard }
+    }
+
+    /// Returns a mutable reference to the PHP executor globals.
+    ///
+    /// The executor globals are guarded by a RwLock. There can be multiple
+    /// immutable references at one time but only ever one mutable reference.
+    /// Attempting to retrieve the globals while already holding the global
+    /// guard will lead to a deadlock. Dropping the globals guard will release
+    /// the lock.
+    pub fn get_mut() -> GlobalWriteGuard<Self> {
+        // SAFETY: PHP executor globals are statically declared therefore should never
+        // return an invalid pointer.
+        let globals = unsafe { &mut *ext_php_rs_sapi_globals() };
+        let guard = SAPI_GLOBALS_LOCK.write();
+        GlobalWriteGuard { globals, guard }
+    }
+}
+
 /// Executor globals rwlock.
 ///
 /// PHP provides no indication if the executor globals are being accessed so
 /// this is only effective on the Rust side.
 static GLOBALS_LOCK: RwLock<()> = const_rwlock(());
 static PROCESS_GLOBALS_LOCK: RwLock<()> = const_rwlock(());
+static SAPI_GLOBALS_LOCK: RwLock<()> = const_rwlock(());
 
 /// Wrapper guard that contains a reference to a given type `T`. Dropping a
 /// guard releases the lock on the relevant rwlock.
