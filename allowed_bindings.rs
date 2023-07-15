@@ -258,6 +258,8 @@ bind! {
     tsrm_get_ls_cache,
     executor_globals_offset,
     sapi_module,
+    core_globals_offset,
+    sapi_globals_offset,
     TRACK_VARS_POST,
     TRACK_VARS_GET,
     TRACK_VARS_COOKIE,
@@ -272,5 +274,6 @@ bind! {
     zend_llist_get_prev_ex,
     php_register_url_stream_wrapper,
     php_stream_locate_url_wrapper,
-    php_stream_wrapper
+    php_stream_wrapper,
+    zend_llist_get_prev_ex
 }

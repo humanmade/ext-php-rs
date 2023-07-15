@@ -80,8 +80,13 @@ where
         }
     }
 }
+<<<<<<< HEAD
 pub const ZEND_DEBUG: u32 = 0;
 pub const _ZEND_TYPE_NAME_BIT: u32 = 8388608;
+=======
+pub const ZEND_DEBUG: u32 = 1;
+pub const _ZEND_TYPE_NAME_BIT: u32 = 16777216;
+>>>>>>> process-globals
 pub const _ZEND_TYPE_NULLABLE_BIT: u32 = 2;
 pub const HT_MIN_SIZE: u32 = 8;
 pub const IS_UNDEF: u32 = 0;
@@ -101,7 +106,7 @@ pub const IS_VOID: u32 = 14;
 pub const IS_MIXED: u32 = 16;
 pub const IS_INDIRECT: u32 = 12;
 pub const IS_PTR: u32 = 13;
-pub const _IS_BOOL: u32 = 17;
+pub const _IS_BOOL: u32 = 18;
 pub const Z_TYPE_FLAGS_SHIFT: u32 = 8;
 pub const IS_TYPE_REFCOUNTED: u32 = 1;
 pub const IS_TYPE_COLLECTABLE: u32 = 2;
@@ -150,13 +155,11 @@ pub const ZEND_ACC_USE_GUARDS: u32 = 2048;
 pub const ZEND_ACC_CONSTANTS_UPDATED: u32 = 4096;
 pub const ZEND_ACC_NO_DYNAMIC_PROPERTIES: u32 = 8192;
 pub const ZEND_HAS_STATIC_IN_METHODS: u32 = 16384;
-pub const ZEND_ACC_PROPERTY_TYPES_RESOLVED: u32 = 32768;
-pub const ZEND_ACC_REUSE_GET_ITERATOR: u32 = 65536;
 pub const ZEND_ACC_RESOLVED_PARENT: u32 = 131072;
 pub const ZEND_ACC_RESOLVED_INTERFACES: u32 = 262144;
 pub const ZEND_ACC_UNRESOLVED_VARIANCE: u32 = 524288;
 pub const ZEND_ACC_NEARLY_LINKED: u32 = 1048576;
-pub const ZEND_ACC_HAS_UNLINKED_USES: u32 = 2097152;
+pub const ZEND_ACC_NOT_SERIALIZABLE: u32 = 536870912;
 pub const ZEND_ACC_DEPRECATED: u32 = 2048;
 pub const ZEND_ACC_RETURN_REFERENCE: u32 = 4096;
 pub const ZEND_ACC_HAS_RETURN_TYPE: u32 = 8192;
@@ -175,9 +178,9 @@ pub const ZEND_ACC_DONE_PASS_TWO: u32 = 33554432;
 pub const ZEND_ACC_HEAP_RT_CACHE: u32 = 67108864;
 pub const ZEND_ACC_STRICT_TYPES: u32 = 2147483648;
 pub const ZEND_ISEMPTY: u32 = 1;
-pub const _ZEND_SEND_MODE_SHIFT: u32 = 24;
-pub const _ZEND_IS_VARIADIC_BIT: u32 = 67108864;
-pub const ZEND_MODULE_API_NO: u32 = 20200930;
+pub const _ZEND_SEND_MODE_SHIFT: u32 = 25;
+pub const _ZEND_IS_VARIADIC_BIT: u32 = 134217728;
+pub const ZEND_MODULE_API_NO: u32 = 20220829;
 pub const USING_ZTS: u32 = 0;
 pub const MAY_BE_BOOL: u32 = 12;
 pub const MAY_BE_ANY: u32 = 1022;
@@ -284,7 +287,10 @@ pub type FILE = __sFILE;
 pub type zend_long = i64;
 pub type zend_ulong = u64;
 pub type zend_off_t = i64;
+<<<<<<< HEAD
 pub type zend_bool = bool;
+=======
+>>>>>>> process-globals
 pub type zend_uchar = ::std::os::raw::c_uchar;
 pub const ZEND_RESULT_CODE_SUCCESS: ZEND_RESULT_CODE = 0;
 pub const ZEND_RESULT_CODE_FAILURE: ZEND_RESULT_CODE = -1;
@@ -368,7 +374,6 @@ pub union _zval_struct__bindgen_ty_2 {
     pub num_args: u32,
     pub fe_pos: u32,
     pub fe_iter_idx: u32,
-    pub access_flags: u32,
     pub property_guard: u32,
     pub constant_flags: u32,
     pub extra: u32,
@@ -410,7 +415,7 @@ pub struct _zend_array {
     pub gc: zend_refcounted_h,
     pub u: _zend_array__bindgen_ty_1,
     pub nTableMask: u32,
-    pub arData: *mut Bucket,
+    pub __bindgen_anon_1: _zend_array__bindgen_ty_2,
     pub nNumUsed: u32,
     pub nNumOfElements: u32,
     pub nTableSize: u32,
@@ -431,6 +436,13 @@ pub struct _zend_array__bindgen_ty_1__bindgen_ty_1 {
     pub _unused: zend_uchar,
     pub nIteratorsCount: zend_uchar,
     pub _unused2: zend_uchar,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union _zend_array__bindgen_ty_2 {
+    pub arHash: *mut u32,
+    pub arData: *mut Bucket,
+    pub arPacked: *mut zval,
 }
 pub type HashPosition = u32;
 #[repr(C)]
@@ -453,7 +465,7 @@ pub struct _zend_object {
 #[derive(Copy, Clone)]
 pub struct _zend_resource {
     pub gc: zend_refcounted_h,
-    pub handle: ::std::os::raw::c_int,
+    pub handle: zend_long,
     pub type_: ::std::os::raw::c_int,
     pub ptr: *mut ::std::os::raw::c_void,
 }
@@ -475,10 +487,22 @@ pub struct _zend_ast_ref {
     pub gc: zend_refcounted_h,
 }
 extern "C" {
-    pub fn _emalloc(size: usize) -> *mut ::std::os::raw::c_void;
+    pub fn _emalloc(
+        size: usize,
+        __zend_filename: *const ::std::os::raw::c_char,
+        __zend_lineno: u32,
+        __zend_orig_filename: *const ::std::os::raw::c_char,
+        __zend_orig_lineno: u32,
+    ) -> *mut ::std::os::raw::c_void;
 }
 extern "C" {
-    pub fn _efree(ptr: *mut ::std::os::raw::c_void);
+    pub fn _efree(
+        ptr: *mut ::std::os::raw::c_void,
+        __zend_filename: *const ::std::os::raw::c_char,
+        __zend_lineno: u32,
+        __zend_orig_filename: *const ::std::os::raw::c_char,
+        __zend_orig_lineno: u32,
+    );
 }
 extern "C" {
     pub fn __zend_malloc(len: usize) -> *mut ::std::os::raw::c_void;
@@ -505,6 +529,19 @@ pub struct _zend_llist {
     pub traverse_ptr: *mut zend_llist_element,
 }
 pub type zend_llist = _zend_llist;
+pub type zend_llist_position = *mut zend_llist_element;
+extern "C" {
+    pub fn zend_llist_get_next_ex(
+        l: *mut zend_llist,
+        pos: *mut zend_llist_position,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn zend_llist_get_prev_ex(
+        l: *mut zend_llist,
+        pos: *mut zend_llist_position,
+    ) -> *mut ::std::os::raw::c_void;
+}
 pub type zend_string_init_interned_func_t = ::std::option::Option<
     unsafe extern "C" fn(
         str_: *const ::std::os::raw::c_char,
@@ -563,7 +600,7 @@ extern "C" {
     pub fn zend_hash_get_current_key_zval_ex(
         ht: *const HashTable,
         key: *mut zval,
-        pos: *mut HashPosition,
+        pos: *const HashPosition,
     );
 }
 extern "C" {
@@ -646,6 +683,18 @@ pub struct _zend_class_iterator_funcs {
 pub type zend_class_iterator_funcs = _zend_class_iterator_funcs;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+<<<<<<< HEAD
+=======
+pub struct _zend_class_arrayaccess_funcs {
+    pub zf_offsetget: *mut zend_function,
+    pub zf_offsetexists: *mut zend_function,
+    pub zf_offsetset: *mut zend_function,
+    pub zf_offsetunset: *mut zend_function,
+}
+pub type zend_class_arrayaccess_funcs = _zend_class_arrayaccess_funcs;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+>>>>>>> process-globals
 pub struct stat {
     pub st_dev: dev_t,
     pub st_mode: mode_t,
@@ -712,6 +761,44 @@ pub struct _zend_trait_alias {
 }
 pub type zend_trait_alias = _zend_trait_alias;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_class_mutable_data {
+    pub default_properties_table: *mut zval,
+    pub constants_table: *mut HashTable,
+    pub ce_flags: u32,
+    pub backed_enum_table: *mut HashTable,
+}
+pub type zend_class_mutable_data = _zend_class_mutable_data;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_class_dependency {
+    pub name: *mut zend_string,
+    pub ce: *mut zend_class_entry,
+}
+pub type zend_class_dependency = _zend_class_dependency;
+pub type zend_inheritance_cache_entry = _zend_inheritance_cache_entry;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_error_info {
+    pub type_: ::std::os::raw::c_int,
+    pub lineno: u32,
+    pub filename: *mut zend_string,
+    pub message: *mut zend_string,
+}
+pub type zend_error_info = _zend_error_info;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_inheritance_cache_entry {
+    pub next: *mut zend_inheritance_cache_entry,
+    pub ce: *mut zend_class_entry,
+    pub parent: *mut zend_class_entry,
+    pub dependencies: *mut zend_class_dependency,
+    pub dependencies_count: u32,
+    pub num_warnings: u32,
+    pub warnings: *mut *mut zend_error_info,
+    pub traits_and_interfaces: [*mut zend_class_entry; 1usize],
+}
+#[repr(C)]
 pub struct _zend_class_entry {
     pub type_: ::std::os::raw::c_char,
     pub name: *mut zend_string,
@@ -722,10 +809,12 @@ pub struct _zend_class_entry {
     pub default_static_members_count: ::std::os::raw::c_int,
     pub default_properties_table: *mut zval,
     pub default_static_members_table: *mut zval,
-    pub static_members_table__ptr: *mut *mut zval,
+    pub static_members_table__ptr: *mut zval,
     pub function_table: HashTable,
     pub properties_info: HashTable,
     pub constants_table: HashTable,
+    pub mutable_data__ptr: *mut zend_class_mutable_data,
+    pub inheritance_cache: *mut zend_inheritance_cache_entry,
     pub properties_info_table: *mut *mut _zend_property_info,
     pub constructor: *mut zend_function,
     pub destructor: *mut zend_function,
@@ -741,6 +830,7 @@ pub struct _zend_class_entry {
     pub __serialize: *mut zend_function,
     pub __unserialize: *mut zend_function,
     pub iterator_funcs_ptr: *mut zend_class_iterator_funcs,
+    pub arrayaccess_funcs_ptr: *mut zend_class_arrayaccess_funcs,
     pub __bindgen_anon_2: _zend_class_entry__bindgen_ty_2,
     pub get_iterator: ::std::option::Option<
         unsafe extern "C" fn(
@@ -779,6 +869,8 @@ pub struct _zend_class_entry {
     pub trait_aliases: *mut *mut zend_trait_alias,
     pub trait_precedences: *mut *mut zend_trait_precedence,
     pub attributes: *mut HashTable,
+    pub enum_backing_type: u32,
+    pub backed_enum_table: *mut HashTable,
     pub info: _zend_class_entry__bindgen_ty_4,
 }
 #[repr(C)]
@@ -920,9 +1012,9 @@ pub type zend_object_get_method_t = ::std::option::Option<
 >;
 pub type zend_object_get_constructor_t =
     ::std::option::Option<unsafe extern "C" fn(object: *mut zend_object) -> *mut zend_function>;
-pub type zend_object_dtor_obj_t =
-    ::std::option::Option<unsafe extern "C" fn(object: *mut zend_object)>;
 pub type zend_object_free_obj_t =
+    ::std::option::Option<unsafe extern "C" fn(object: *mut zend_object)>;
+pub type zend_object_dtor_obj_t =
     ::std::option::Option<unsafe extern "C" fn(object: *mut zend_object)>;
 pub type zend_object_clone_obj_t =
     ::std::option::Option<unsafe extern "C" fn(object: *mut zend_object) -> *mut zend_object>;
@@ -936,10 +1028,10 @@ pub type zend_object_cast_t = ::std::option::Option<
         readobj: *mut zend_object,
         retval: *mut zval,
         type_: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int,
+    ) -> zend_result,
 >;
 pub type zend_object_count_elements_t = ::std::option::Option<
-    unsafe extern "C" fn(object: *mut zend_object, count: *mut zend_long) -> ::std::os::raw::c_int,
+    unsafe extern "C" fn(object: *mut zend_object, count: *mut zend_long) -> zend_result,
 >;
 pub type zend_object_get_closure_t = ::std::option::Option<
     unsafe extern "C" fn(
@@ -947,8 +1039,8 @@ pub type zend_object_get_closure_t = ::std::option::Option<
         ce_ptr: *mut *mut zend_class_entry,
         fptr_ptr: *mut *mut zend_function,
         obj_ptr: *mut *mut zend_object,
-        check_only: zend_bool,
-    ) -> ::std::os::raw::c_int,
+        check_only: bool,
+    ) -> zend_result,
 >;
 pub type zend_object_get_gc_t = ::std::option::Option<
     unsafe extern "C" fn(
@@ -963,7 +1055,7 @@ pub type zend_object_do_operation_t = ::std::option::Option<
         result: *mut zval,
         op1: *mut zval,
         op2: *mut zval,
-    ) -> ::std::os::raw::c_int,
+    ) -> zend_result,
 >;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1026,7 +1118,7 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn zend_is_identical(op1: *mut zval, op2: *mut zval) -> zend_bool;
+    pub fn zend_is_identical(op1: *mut zval, op2: *mut zval) -> bool;
 }
 extern "C" {
     pub fn zend_is_true(op: *mut zval) -> ::std::os::raw::c_int;
@@ -1114,13 +1206,13 @@ pub struct _zend_op_array {
     pub required_num_args: u32,
     pub arg_info: *mut zend_arg_info,
     pub attributes: *mut HashTable,
+    pub T: u32,
+    pub run_time_cache__ptr: *mut *mut ::std::os::raw::c_void,
     pub cache_size: ::std::os::raw::c_int,
     pub last_var: ::std::os::raw::c_int,
-    pub T: u32,
     pub last: u32,
     pub opcodes: *mut zend_op,
-    pub run_time_cache__ptr: *mut *mut *mut ::std::os::raw::c_void,
-    pub static_variables_ptr__ptr: *mut *mut HashTable,
+    pub static_variables_ptr__ptr: *mut HashTable,
     pub static_variables: *mut HashTable,
     pub vars: *mut *mut zend_string,
     pub refcount: *mut u32,
@@ -1133,7 +1225,9 @@ pub struct _zend_op_array {
     pub line_end: u32,
     pub doc_comment: *mut zend_string,
     pub last_literal: ::std::os::raw::c_int,
+    pub num_dynamic_func_defs: u32,
     pub literals: *mut zval,
+    pub dynamic_func_defs: *mut *mut zend_op_array,
     pub reserved: [*mut ::std::os::raw::c_void; 6usize],
 }
 pub type zif_handler = ::std::option::Option<
@@ -1152,6 +1246,8 @@ pub struct _zend_internal_function {
     pub required_num_args: u32,
     pub arg_info: *mut zend_internal_arg_info,
     pub attributes: *mut HashTable,
+    pub T: u32,
+    pub run_time_cache__ptr: *mut *mut ::std::os::raw::c_void,
     pub handler: zif_handler,
     pub module: *mut _zend_module_entry,
     pub reserved: [*mut ::std::os::raw::c_void; 6usize],
@@ -1179,6 +1275,8 @@ pub struct _zend_function__bindgen_ty_1 {
     pub required_num_args: u32,
     pub arg_info: *mut zend_arg_info,
     pub attributes: *mut HashTable,
+    pub T: u32,
+    pub run_time_cache__ptr: *mut *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 pub struct _zend_execute_data {
@@ -1197,6 +1295,12 @@ pub type zend_executor_globals = _zend_executor_globals;
 extern "C" {
     pub static mut executor_globals: zend_executor_globals;
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct zend_atomic_bool_s {
+    pub value: u8,
+}
+pub type zend_atomic_bool = zend_atomic_bool_s;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _zend_stack {
@@ -1233,6 +1337,18 @@ extern "C" {
 pub type zend_vm_stack = *mut _zend_vm_stack;
 pub type zend_ini_entry = _zend_ini_entry;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_fiber_context {
+    _unused: [u8; 0],
+}
+pub type zend_fiber_context = _zend_fiber_context;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _zend_fiber {
+    _unused: [u8; 0],
+}
+pub type zend_fiber = _zend_fiber;
+#[repr(C)]
 pub struct _zend_executor_globals {
     pub uninitialized_zval: zval,
     pub error_zval: zval,
@@ -1260,10 +1376,10 @@ pub struct _zend_executor_globals {
     pub persistent_functions_count: u32,
     pub persistent_classes_count: u32,
     pub in_autoload: *mut HashTable,
-    pub full_tables_cleanup: zend_bool,
-    pub no_extensions: zend_bool,
-    pub vm_interrupt: zend_bool,
-    pub timed_out: zend_bool,
+    pub full_tables_cleanup: bool,
+    pub no_extensions: bool,
+    pub vm_interrupt: zend_atomic_bool,
+    pub timed_out: zend_atomic_bool,
     pub hard_timeout: zend_long,
     pub regular_list: HashTable,
     pub persistent_list: HashTable,
@@ -1276,7 +1392,7 @@ pub struct _zend_executor_globals {
     pub error_handling: zend_error_handling_t,
     pub exception_class: *mut zend_class_entry,
     pub timeout_seconds: zend_long,
-    pub lambda_count: ::std::os::raw::c_int,
+    pub capture_warnings_during_sccp: ::std::os::raw::c_int,
     pub ini_directives: *mut HashTable,
     pub modified_ini_directives: *mut HashTable,
     pub error_reporting_ini_entry: *mut zend_ini_entry,
@@ -1286,7 +1402,7 @@ pub struct _zend_executor_globals {
     pub opline_before_exception: *const zend_op,
     pub exception_op: [zend_op; 3usize],
     pub current_module: *mut _zend_module_entry,
-    pub active: zend_bool,
+    pub active: bool,
     pub flags: zend_uchar,
     pub assertions: zend_long,
     pub ht_iterators_count: u32,
@@ -1297,10 +1413,22 @@ pub struct _zend_executor_globals {
     pub trampoline: zend_function,
     pub call_trampoline_op: zend_op,
     pub weakrefs: HashTable,
-    pub exception_ignore_args: zend_bool,
+    pub exception_ignore_args: bool,
     pub exception_string_param_max_len: zend_long,
     pub get_gc_buffer: zend_get_gc_buffer,
+    pub main_fiber_context: *mut zend_fiber_context,
+    pub current_fiber_context: *mut zend_fiber_context,
+    pub active_fiber: *mut zend_fiber,
+    pub fiber_stack_size: zend_long,
+    pub record_errors: bool,
+    pub num_errors: u32,
+    pub errors: *mut *mut zend_error_info,
+    pub filename_override: *mut zend_string,
+    pub lineno_override: zend_long,
     pub reserved: [*mut ::std::os::raw::c_void; 6usize],
+}
+extern "C" {
+    pub fn zend_is_auto_global(name: *mut zend_string) -> bool;
 }
 pub type zend_module_entry = _zend_module_entry;
 #[repr(C)]
@@ -1405,7 +1533,7 @@ extern "C" {
         callable: *mut zval,
         check_flags: u32,
         callable_name: *mut *mut zend_string,
-    ) -> zend_bool;
+    ) -> bool;
 }
 extern "C" {
     pub fn zend_declare_property(
@@ -1488,6 +1616,7 @@ extern "C" {
 extern "C" {
     pub fn php_printf(format: *const ::std::os::raw::c_char, ...) -> usize;
 }
+<<<<<<< HEAD
 extern "C" {
     pub fn php_error_docref(
         docref: *const ::std::os::raw::c_char,
@@ -1496,6 +1625,8 @@ extern "C" {
         ...
     );
 }
+=======
+>>>>>>> process-globals
 pub type php_stream = _php_stream;
 pub type php_stream_wrapper = _php_stream_wrapper;
 pub type php_stream_context = _php_stream_context;
@@ -1663,6 +1794,14 @@ pub struct _php_stream_wrapper_ops {
             options: ::std::os::raw::c_int,
             opened_path: *mut *mut zend_string,
             context: *mut php_stream_context,
+<<<<<<< HEAD
+=======
+            __php_stream_call_depth: ::std::os::raw::c_int,
+            __zend_filename: *const ::std::os::raw::c_char,
+            __zend_lineno: u32,
+            __zend_orig_filename: *const ::std::os::raw::c_char,
+            __zend_orig_lineno: u32,
+>>>>>>> process-globals
         ) -> *mut php_stream,
     >,
     pub stream_closer: ::std::option::Option<
@@ -1695,6 +1834,14 @@ pub struct _php_stream_wrapper_ops {
             options: ::std::os::raw::c_int,
             opened_path: *mut *mut zend_string,
             context: *mut php_stream_context,
+<<<<<<< HEAD
+=======
+            __php_stream_call_depth: ::std::os::raw::c_int,
+            __zend_filename: *const ::std::os::raw::c_char,
+            __zend_lineno: u32,
+            __zend_orig_filename: *const ::std::os::raw::c_char,
+            __zend_orig_lineno: u32,
+>>>>>>> process-globals
         ) -> *mut php_stream,
     >,
     pub label: *const ::std::os::raw::c_char,
@@ -1761,7 +1908,10 @@ pub struct _php_stream {
     pub wrapperdata: zval,
     pub _bitfield_align_1: [u8; 0],
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
+<<<<<<< HEAD
     pub fgetss_state: u8,
+=======
+>>>>>>> process-globals
     pub mode: [::std::os::raw::c_char; 16usize],
     pub flags: u32,
     pub res: *mut zend_resource,
@@ -1774,6 +1924,11 @@ pub struct _php_stream {
     pub readpos: zend_off_t,
     pub writepos: zend_off_t,
     pub chunk_size: usize,
+<<<<<<< HEAD
+=======
+    pub open_filename: *const ::std::os::raw::c_char,
+    pub open_lineno: u32,
+>>>>>>> process-globals
     pub enclosing_stream: *mut _php_stream,
 }
 impl _php_stream {
@@ -1867,21 +2022,20 @@ impl _php_stream {
 pub type php_core_globals = _php_core_globals;
 #[repr(C)]
 pub struct _php_core_globals {
-    pub implicit_flush: zend_bool,
+    pub implicit_flush: bool,
     pub output_buffering: zend_long,
-    pub enable_dl: zend_bool,
+    pub enable_dl: bool,
     pub output_handler: *mut ::std::os::raw::c_char,
     pub unserialize_callback_func: *mut ::std::os::raw::c_char,
     pub serialize_precision: zend_long,
     pub memory_limit: zend_long,
     pub max_input_time: zend_long,
     pub display_errors: zend_uchar,
-    pub display_startup_errors: zend_bool,
-    pub log_errors: zend_bool,
-    pub log_errors_max_len: zend_long,
-    pub ignore_repeated_errors: zend_bool,
-    pub ignore_repeated_source: zend_bool,
-    pub report_memleaks: zend_bool,
+    pub display_startup_errors: bool,
+    pub log_errors: bool,
+    pub ignore_repeated_errors: bool,
+    pub ignore_repeated_source: bool,
+    pub report_memleaks: bool,
     pub error_log: *mut ::std::os::raw::c_char,
     pub doc_root: *mut ::std::os::raw::c_char,
     pub user_dir: *mut ::std::os::raw::c_char,
@@ -1903,45 +2057,47 @@ pub struct _php_core_globals {
     pub variables_order: *mut ::std::os::raw::c_char,
     pub rfc1867_protected_variables: HashTable,
     pub connection_status: ::std::os::raw::c_short,
-    pub ignore_user_abort: zend_bool,
+    pub ignore_user_abort: bool,
     pub header_is_being_sent: ::std::os::raw::c_uchar,
     pub tick_functions: zend_llist,
     pub http_globals: [zval; 6usize],
-    pub expose_php: zend_bool,
-    pub register_argc_argv: zend_bool,
-    pub auto_globals_jit: zend_bool,
+    pub expose_php: bool,
+    pub register_argc_argv: bool,
+    pub auto_globals_jit: bool,
     pub docref_root: *mut ::std::os::raw::c_char,
     pub docref_ext: *mut ::std::os::raw::c_char,
-    pub html_errors: zend_bool,
-    pub xmlrpc_errors: zend_bool,
+    pub html_errors: bool,
+    pub xmlrpc_errors: bool,
     pub xmlrpc_error_number: zend_long,
-    pub activated_auto_globals: [zend_bool; 8usize],
-    pub modules_activated: zend_bool,
-    pub file_uploads: zend_bool,
-    pub during_request_startup: zend_bool,
-    pub allow_url_fopen: zend_bool,
-    pub enable_post_data_reading: zend_bool,
-    pub report_zend_debug: zend_bool,
+    pub activated_auto_globals: [bool; 8usize],
+    pub modules_activated: bool,
+    pub file_uploads: bool,
+    pub during_request_startup: bool,
+    pub allow_url_fopen: bool,
+    pub enable_post_data_reading: bool,
+    pub report_zend_debug: bool,
     pub last_error_type: ::std::os::raw::c_int,
     pub last_error_message: *mut zend_string,
-    pub last_error_file: *mut ::std::os::raw::c_char,
+    pub last_error_file: *mut zend_string,
     pub last_error_lineno: ::std::os::raw::c_int,
     pub php_sys_temp_dir: *mut ::std::os::raw::c_char,
     pub disable_classes: *mut ::std::os::raw::c_char,
-    pub allow_url_include: zend_bool,
+    pub allow_url_include: bool,
     pub max_input_nesting_level: zend_long,
     pub max_input_vars: zend_long,
-    pub in_user_include: zend_bool,
+    pub in_user_include: bool,
     pub user_ini_filename: *mut ::std::os::raw::c_char,
     pub user_ini_cache_ttl: zend_long,
     pub request_order: *mut ::std::os::raw::c_char,
-    pub mail_x_header: zend_bool,
+    pub mail_x_header: bool,
+    pub mail_mixed_lf_and_crlf: bool,
     pub mail_log: *mut ::std::os::raw::c_char,
-    pub in_error_log: zend_bool,
+    pub in_error_log: bool,
     pub syslog_facility: zend_long,
     pub syslog_ident: *mut ::std::os::raw::c_char,
-    pub have_called_openlog: zend_bool,
+    pub have_called_openlog: bool,
     pub syslog_filter: zend_long,
+    pub error_log_mode: zend_long,
 }
 extern "C" {
     pub static mut core_globals: _php_core_globals;
@@ -2019,7 +2175,7 @@ extern "C" {
     pub fn zend_register_bool_constant(
         name: *const ::std::os::raw::c_char,
         name_len: usize,
-        bval: zend_bool,
+        bval: bool,
         flags: ::std::os::raw::c_int,
         module_number: ::std::os::raw::c_int,
     );
@@ -2137,22 +2293,84 @@ extern "C" {
 extern "C" {
     pub static mut zend_ce_stringable: *mut zend_class_entry;
 }
-extern "C" {
-    pub fn zend_class_serialize_deny(
-        object: *mut zval,
-        buffer: *mut *mut ::std::os::raw::c_uchar,
-        buf_len: *mut usize,
-        data: *mut zend_serialize_data,
-    ) -> ::std::os::raw::c_int;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct sapi_header_struct {
+    pub header: *mut ::std::os::raw::c_char,
+    pub header_len: usize,
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct sapi_headers_struct {
+    pub headers: zend_llist,
+    pub http_response_code: ::std::os::raw::c_int,
+    pub send_default_content_type: ::std::os::raw::c_uchar,
+    pub mimetype: *mut ::std::os::raw::c_char,
+    pub http_status_line: *mut ::std::os::raw::c_char,
+}
+pub type sapi_post_entry = _sapi_post_entry;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct sapi_request_info {
+    pub request_method: *const ::std::os::raw::c_char,
+    pub query_string: *mut ::std::os::raw::c_char,
+    pub cookie_data: *mut ::std::os::raw::c_char,
+    pub content_length: zend_long,
+    pub path_translated: *mut ::std::os::raw::c_char,
+    pub request_uri: *mut ::std::os::raw::c_char,
+    pub request_body: *mut _php_stream,
+    pub content_type: *const ::std::os::raw::c_char,
+    pub headers_only: bool,
+    pub no_headers: bool,
+    pub headers_read: bool,
+    pub post_entry: *mut sapi_post_entry,
+    pub content_type_dup: *mut ::std::os::raw::c_char,
+    pub auth_user: *mut ::std::os::raw::c_char,
+    pub auth_password: *mut ::std::os::raw::c_char,
+    pub auth_digest: *mut ::std::os::raw::c_char,
+    pub argv0: *mut ::std::os::raw::c_char,
+    pub current_user: *mut ::std::os::raw::c_char,
+    pub current_user_length: ::std::os::raw::c_int,
+    pub argc: ::std::os::raw::c_int,
+    pub argv: *mut *mut ::std::os::raw::c_char,
+    pub proto_num: ::std::os::raw::c_int,
+}
+#[repr(C)]
+pub struct _sapi_globals_struct {
+    pub server_context: *mut ::std::os::raw::c_void,
+    pub request_info: sapi_request_info,
+    pub sapi_headers: sapi_headers_struct,
+    pub read_post_bytes: i64,
+    pub post_read: ::std::os::raw::c_uchar,
+    pub headers_sent: ::std::os::raw::c_uchar,
+    pub global_stat: zend_stat_t,
+    pub default_mimetype: *mut ::std::os::raw::c_char,
+    pub default_charset: *mut ::std::os::raw::c_char,
+    pub rfc1867_uploaded_files: *mut HashTable,
+    pub post_max_size: zend_long,
+    pub options: ::std::os::raw::c_int,
+    pub sapi_started: bool,
+    pub global_request_time: f64,
+    pub known_post_content_types: HashTable,
+    pub callback_func: zval,
+    pub fci_cache: zend_fcall_info_cache,
+}
+pub type sapi_globals_struct = _sapi_globals_struct;
 extern "C" {
-    pub fn zend_class_unserialize_deny(
-        object: *mut zval,
-        ce: *mut zend_class_entry,
-        buf: *const ::std::os::raw::c_uchar,
-        buf_len: usize,
-        data: *mut zend_unserialize_data,
-    ) -> ::std::os::raw::c_int;
+    pub static mut sapi_globals: sapi_globals_struct;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _sapi_post_entry {
+    pub content_type: *mut ::std::os::raw::c_char,
+    pub content_type_len: u32,
+    pub post_reader: ::std::option::Option<unsafe extern "C" fn()>,
+    pub post_handler: ::std::option::Option<
+        unsafe extern "C" fn(
+            content_type_dup: *mut ::std::os::raw::c_char,
+            arg: *mut ::std::os::raw::c_void,
+        ),
+    >,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

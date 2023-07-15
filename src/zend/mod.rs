@@ -8,6 +8,7 @@ mod function;
 mod globals;
 mod handlers;
 mod ini_entry_def;
+mod linked_list;
 mod module;
 
 use crate::{error::Result, ffi::{php_printf, sapi_module}};
@@ -22,6 +23,7 @@ pub use globals::ProcessGlobals;
 pub use globals::SapiGlobals;
 pub use handlers::ZendObjectHandlers;
 pub use ini_entry_def::IniEntryDef;
+pub use linked_list::ZendLinkedList;
 pub use module::ModuleEntry;
 
 // Used as the format string for `php_printf`.
