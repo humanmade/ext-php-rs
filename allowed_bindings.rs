@@ -264,5 +264,13 @@ bind! {
     TRACK_VARS_SERVER,
     TRACK_VARS_ENV,
     TRACK_VARS_FILES,
-    TRACK_VARS_REQUEST
+    TRACK_VARS_REQUEST,
+    sapi_request_info,
+    sapi_header_struct,
+    zend_is_auto_global,
+    zend_llist_get_next_ex,
+    zend_llist_get_prev_ex,
+    php_register_url_stream_wrapper,
+    php_stream_locate_url_wrapper,
+    php_stream_wrapper
 }
