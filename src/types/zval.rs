@@ -627,7 +627,7 @@ impl Debug for Zval {
 
 impl Drop for Zval {
     fn drop(&mut self) {
-        //self.change_type(ZvalTypeFlags::Null);
+        self.change_type(ZvalTypeFlags::Null);
     }
 }
 
